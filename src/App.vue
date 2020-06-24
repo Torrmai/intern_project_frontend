@@ -5,6 +5,7 @@
     <p>Display below is the latest one or  you can search other session</p>
     <search/>
     <tables/>
+    <div id="caution"><h4>sorted by total number of packet in one minute interval</h4></div>
   </div>
 </template>
 
@@ -41,5 +42,10 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 20px;
+}
+#caution{
+    padding-top: 10px;
+    color: rgb(119, 28, 0);
+    /* border: 3px solid red; */
 }
 </style>
