@@ -1,17 +1,34 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <clock/>
+    <h2>Latest session is one minute behind</h2>
+    <p>Display below is the latest one or  you can search other session</p>
+    <search/>
+    <tables/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import clock from './components/clock.vue'
+import search from "./components/search.vue";
+import tables from "./components/tables.vue";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    clock,
+    search,
+    tables
+  },
+  data: function(){
+    return{
+    }
+  },
+  mounted : function() {
+  },
+  beforeDestroy(){
+  },
+  methods:{
   }
 }
 </script>
@@ -23,6 +40,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 </style>
