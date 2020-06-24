@@ -1,7 +1,8 @@
 <template>
     <div class="time_info">
         <h1>Server time</h1>
-        <p id="server_time">{{date}}/{{month}}/{{year}} {{hour}}:{{min}}</p>
+        <p id="server_time" v-if="year !== ''">{{date}}/{{month}}/{{year}} {{hour}}:{{min}}</p>
+        <p id="server_time" v-else>Loading......</p>
     </div>
 </template>
 
@@ -47,6 +48,7 @@ export default {
 </script>
 <style>
 #server_time {
+    padding-top:5px ;
     font-weight: 600;
 }
 </style>

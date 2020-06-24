@@ -1,6 +1,6 @@
 <template>
     <div id="table_container">
-        <table id="main_tb">
+        <table id="main_tb" v-if="!error_msg">
             <tr>
                 <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
             </tr>
@@ -15,6 +15,7 @@
                 <th>{{tp[n-1]}}</th>
             </tr>
         </table>
+        <h1 v-else>Check you connection or can't find a file</h1>
     </div>
 </template>
 <script>
@@ -31,7 +32,8 @@ export default {
             count:[10],
             sum_size:[10],
             packet_s:[10],
-            tp:[10]
+            tp:[10],
+            error_msg:true
         }
     },
     mounted: function(){
@@ -41,9 +43,6 @@ export default {
         clearInterval(this.intervalid2)
     },
     methods:{
-        to_array:function(str){
-            return str.split(",")
-        },
         json_data_to_local:function(str,id){
             let dt_array = str.split(",")
             this.ip_addr[id] = (dt_array[0])
@@ -59,10 +58,16 @@ export default {
             this.intervalid2 = setInterval(()=>{
                 axios.get("http://158.108.183.253:8080/api/brief_stat")
                     .then(response =>{
-                        this.hdr_data = this.to_array(response.data.header1)
-                        let data_arr= response.data.data1
-                        for (let index = 0; index < data_arr.length; index++) {
-                            this.json_data_to_local(data_arr[index],index)
+                        if(!response.data.error_status){
+                            this.hdr_data = response.data.header1.split(",")
+                            let data_arr= response.data.data1
+                            for (let index = 0; index < data_arr.length; index++) {
+                                this.json_data_to_local(data_arr[index],index)
+                            }
+                            this.error_msg = false
+                        }
+                        else{
+                            this.error_msg = true
                         }
                     })
                     .catch(err=>console.log(err))
@@ -78,14 +83,15 @@ table, th, td {
 }
 th,td{
     padding-left: 15px;
-    padding-top: 10px;
+    padding-top: 7px;
 }
 #table_container{
-    margin-top: 25px ;
+    margin-top: 12px ;
     display: flex;
     justify-content: center;
 }
 #main-tb{
     width: 100%;
 }
+
 </style>
