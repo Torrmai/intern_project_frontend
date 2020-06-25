@@ -5,17 +5,17 @@
                 <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
             </tr>
             <tr v-for="n in 10" :key="n">
-                <th>{{ip_addr[n-1]}}</th>
-                <th>{{port[n-1]}}</th>
-                <th>{{ip_version[n-1]}}</th>
-                <th>{{end_point[n-1]}}</th>
-                <th>{{count[n-1]}}</th>
-                <th>{{sum_size[n-1]}}</th>
-                <th>{{packet_s[n-1]}}</th>
-                <th>{{tp[n-1]}}</th>
+                <td>{{ip_addr[n-1]}}</td>
+                <td>{{port[n-1]}}</td>
+                <td>{{ip_version[n-1]}}</td>
+                <td>{{end_point[n-1]}}</td>
+                <td>{{count[n-1]}}</td>
+                <td>{{sum_size[n-1]}}</td>
+                <td>{{packet_s[n-1]}}</td>
+                <td>{{tp[n-1]}}</td>
             </tr>
         </table>
-        <h1 v-else>Check you connection or can't find a file</h1>
+        <h1 v-else>Loading....</h1>
     </div>
 </template>
 <script>
@@ -33,7 +33,8 @@ export default {
             sum_size:[10],
             packet_s:[10],
             tp:[10],
-            error_msg:true
+            error_msg:true,
+            session_name:""
         }
     },
     mounted: function(){
@@ -59,6 +60,8 @@ export default {
                 axios.get("http://158.108.183.253:8080/api/brief_stat")
                     .then(response =>{
                         if(!response.data.error_status){
+                            //console.log(response.data)
+                            this.session_name = response.data.session_name
                             this.hdr_data = response.data.header1.split(",")
                             let data_arr= response.data.data1
                             for (let index = 0; index < data_arr.length; index++) {
@@ -71,7 +74,12 @@ export default {
                         }
                     })
                     .catch(err=>console.log(err))
-            },5*1000)
+            },10*1000)
+        }
+    },
+    watch:{
+        session_name:function(){
+            this.$emit('session-change',this.session_name)
         }
     }
 }

@@ -40,7 +40,7 @@ export default {
                             self.min = (web_data.serv_min < 10 ? "0" + web_data.serv_min : web_data.serv_min)
                         })
                         .catch(err => console.log(err))                    
-                },5*1000
+                },10*1000
             )
         }
     },

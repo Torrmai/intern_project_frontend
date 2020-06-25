@@ -2,9 +2,11 @@
   <div id="app">
     <clock/>
     <h2>Latest session is one minute behind</h2>
-    <p>Display below is the latest one or  you can search other session</p>
-    <search/>
-    <tables/>
+    <p v-if="session_name != ''">Session name: <span id="session-id">{{session_name}}</span></p>
+    <p v-else>Loading......</p>
+    <search @set-search="set_search" @get-session="get_session"/>
+    <tables @session-change="get_session" v-if="!is_search"/>
+    <h1 v-else>Test</h1>
     <div id="caution"><h4>sorted by total number of packet in one minute interval</h4></div>
   </div>
 </template>
@@ -23,6 +25,8 @@ export default {
   },
   data: function(){
     return{
+      session_name:"",
+      is_search:false
     }
   },
   mounted : function() {
@@ -30,6 +34,13 @@ export default {
   beforeDestroy(){
   },
   methods:{
+    get_session:function(params) {
+      this.session_name = params
+    },
+    set_search:function(s) {
+      console.log("searching....")
+      this.is_search = s
+    }
   }
 }
 </script>
@@ -43,9 +54,12 @@ export default {
   color: #2c3e50;
   padding-top:0px ;
 }
-#caution{
+#caution,#session-id{
     padding-top: 10px;
-    color: rgb(119, 28, 0);
+    color: rgb(255, 2, 2);
     /* border: 3px solid red; */
+}
+#session-id{
+  font-weight: 900;
 }
 </style>
