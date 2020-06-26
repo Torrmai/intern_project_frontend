@@ -16,7 +16,9 @@ export default {
     data:function () {
         return{
             msg:"",
-            is_search:false
+            is_search:false,
+            data:[],
+            header:[]
         }
     },
     methods:{
@@ -30,6 +32,8 @@ export default {
                     this.is_search = false
                 }
                 else{
+                    this.data = res.data.data_raw
+                    this.header = res.data.header_data
                     this.is_search = true
                 }
             })
@@ -40,6 +44,7 @@ export default {
         is_search:function() {
             this.$emit('set-search',this.is_search)
             this.$emit("get-session","custom query: "+this.msg)
+            this.$emit("get-search",[this.data,this.header])
             this.msg=""
         },
     }
