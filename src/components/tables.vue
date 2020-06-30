@@ -11,8 +11,6 @@
                 <td>{{end_point[n-1]}}</td>
                 <td>{{count[n-1]}}</td>
                 <td>{{sum_size[n-1]}}</td>
-                <td>{{packet_s[n-1]}}</td>
-                <td>{{tp[n-1]}}</td>
             </tr>
         </table>
         <h1 v-else>Loading....</h1>
@@ -31,8 +29,6 @@ export default {
             end_point:[10],
             count:[10],
             sum_size:[10],
-            packet_s:[10],
-            tp:[10],
             error_msg:true,
             session_name:""
         }
@@ -48,12 +44,10 @@ export default {
             let dt_array = str.split(",")
             this.ip_addr[id] = (dt_array[0])
             this.port[id] = (dt_array[1])
-            this.ip_version[id] = ((dt_array[2] == 0 ? "ipV4" : "ipV6"))
+            this.ip_version[id] = ((dt_array[2] == 0 ? "IPv4" : "IPv6"))
             this.end_point[id]=((dt_array[3] == 0 ? "src" :"dst"))
-            this.count[id]=parseFloat(dt_array[4]).toFixed(0)
-            this.sum_size[id]=parseFloat(dt_array[5]).toFixed(0)
-            this.packet_s[id]=parseFloat(dt_array[6]).toFixed(2)
-            this.tp[id]=parseFloat(dt_array[7]).toFixed(2) 
+            this.count[id]=parseFloat(dt_array[4]).toFixed(2)
+            this.sum_size[id]=parseFloat(dt_array[5]).toFixed(2)
         },
         fetch_data:function(){
             this.intervalid2 = setInterval(()=>{
@@ -62,7 +56,7 @@ export default {
                         if(!response.data.error_status){
                             //console.log(response.data)
                             this.session_name = response.data.session_name
-                            this.hdr_data = response.data.header1.split(",")
+                            this.hdr_data = response.data.header1
                             let data_arr= response.data.data1
                             for (let index = 0; index < data_arr.length; index++) {
                                 this.json_data_to_local(data_arr[index],index)

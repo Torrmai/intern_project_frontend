@@ -50,15 +50,13 @@ export default {
       let i;
       for(i in x[0]){
         let tmp = x[0][i].split(",")
-        tmp[2] == 0 ? tmp[2] = "ipV4" : tmp[2] = "ipV6"
+        tmp[2] == 0 ? tmp[2] = "IPv4" : tmp[2] = "IPv6"
         tmp[3] == 0 ? tmp[3] = "src" :tmp[3] = "dst"
-        tmp[4] = parseFloat(tmp[4]).toFixed(0)
-        tmp[5] = parseFloat(tmp[5]).toFixed(0)
-        tmp[6] = parseFloat(tmp[6]).toFixed(2)
-        tmp[7] = parseFloat(tmp[7]).toFixed(2)
+        tmp[4] = parseFloat(tmp[4]).toFixed(2)
+        tmp[5] = parseFloat(tmp[5]).toFixed(2)
         this.search_data.push(tmp)
       }
-      this.search_hdr = x[1].split(",")
+      this.search_hdr = x[1]
       console.log(y)
     }
   }
