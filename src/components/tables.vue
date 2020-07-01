@@ -1,18 +1,35 @@
 <template>
     <div id="table_container">
-        <table id="main_tb" v-if="!error_msg">
-            <tr>
-                <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
-            </tr>
-            <tr v-for="n in 10" :key="n">
-                <td>{{ip_addr[n-1]}}</td>
-                <td>{{port[n-1]}}</td>
-                <td>{{ip_version[n-1]}}</td>
-                <td>{{end_point[n-1]}}</td>
-                <td>{{count[n-1]}}</td>
-                <td>{{sum_size[n-1]}}</td>
-            </tr>
-        </table>
+        <div id="table_area_src" v-if="!error_msg">
+            <h3>ip src</h3>
+            <table id="main_tb" v-if="!error_msg">
+                <tr>
+                    <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
+                </tr>
+                <tr v-for="n in 10" :key="n">
+                    <td>{{ip_addr[n-1]}}</td>
+                    <td>{{port[n-1]}}</td>
+                    <td>{{ip_version[n-1]}}</td>
+                    <td>{{count[n-1]}}</td>
+                    <td>{{sum_size[n-1]}}</td>
+                </tr>
+            </table>
+        </div>
+        <div id="table_area_src" v-if="!error_msg">
+            <h3>ip dst</h3>
+            <table id="main_tb" v-if="!error_msg">
+                <tr>
+                    <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
+                </tr>
+                <tr v-for="n in 10" :key="n">
+                    <td>{{ip_dst[n-1]}}</td>
+                    <td>{{port_dst[n-1]}}</td>
+                    <td>{{ip_ver_dst[n-1]}}</td>
+                    <td>{{pps_dst[n-1]}}</td>
+                    <td>{{tp_dst[n-1]}}</td>
+                </tr>
+            </table>
+        </div>
         <h1 v-else>Loading....</h1>
     </div>
 </template>
@@ -23,12 +40,12 @@ export default {
     data(){
         return{
             hdr_data:[],
-            ip_addr:[10],
-            port:[10],
-            ip_version:[10],
+            ip_addr:[10],ip_dst:[10],
+            port:[10],port_dst:[10],
+            ip_version:[10],ip_ver_dst:[10],
             end_point:[10],
-            count:[10],
-            sum_size:[10],
+            count:[10],pps_dst:[10],
+            sum_size:[10],tp_dst:[10],
             error_msg:true,
             session_name:""
         }
@@ -56,10 +73,19 @@ export default {
                         if(!response.data.error_status){
                             //console.log(response.data)
                             this.session_name = response.data.session_name
-                            this.hdr_data = response.data.header1
+                            this.hdr_data = response.data.header1.filter(i => i !== "end point")
                             let data_arr= response.data.data1
+                            let data_dst= response.data.data2
                             for (let index = 0; index < data_arr.length; index++) {
                                 this.json_data_to_local(data_arr[index],index)
+                            }
+                            for (let id = 0;id < data_dst.length;id++){
+                                let dt = data_dst[id].split(",")
+                                this.ip_dst[id] = dt[0]
+                                this.port_dst[id] = dt[1]
+                                this.ip_ver_dst[id] = (dt[2] == 0 ? "IPv4" : "IPv6")
+                                this.pps_dst[id] = parseFloat(dt[4]).toFixed(2)
+                                this.tp_dst[id] = parseFloat(dt[5]).toFixed(2)
                             }
                             this.error_msg = false
                         }
@@ -88,9 +114,9 @@ th,td{
     padding-top: 7px;
 }
 #table_container{
-    margin-top: 12px ;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 #main-tb{
     width: 100%;

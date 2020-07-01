@@ -8,7 +8,7 @@
             @get-search="set_data"/>
     <tables @session-change="get_session" v-if="!is_search"/>
     <table-search v-else v-bind:search_data="search_data" v-bind:search_hdr="search_hdr"/>
-    <div id="caution"><h4>sorted by total number of packet in one minute interval</h4></div>
+    <div id="caution"><h4>sorted by pps</h4></div>
   </div>
 </template>
 
