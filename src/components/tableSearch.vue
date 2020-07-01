@@ -1,13 +1,27 @@
 <template>
     <div id="table_container">
-        <table id="main_tb">
-            <tr>
-                <th v-for="hdr in search_hdr" :key="hdr">{{hdr}}</th>
-            </tr>
-            <tr v-for="n in search_data" :key="n">
-                <td v-for="j in n" :key="j">{{j}}</td>
-            </tr>
-        </table>
+        <div class="table_area">
+            <h3>ip src statistic</h3>
+            <table id="main_tb">
+                <tr>
+                    <th v-for="hdr in search_hdr" :key="hdr">{{hdr}}</th>
+                </tr>
+                <tr v-for="n in search_data" :key="n">
+                    <td v-for="j in n" :key="j">{{j}}</td>
+                </tr>
+            </table>            
+        </div>
+        <div class="table_area">
+            <h3>ip dst statistic</h3>
+            <table id="main_tb">
+                <tr>
+                    <th v-for="hdr in search_hdr" :key="hdr">{{hdr}}</th>
+                </tr>
+                <tr v-for="n in search_data_dst" :key="n">
+                    <td v-for="j in n" :key="j">{{j}}</td>
+                </tr>
+            </table>            
+        </div>
         <!-- <h1 v-else>Loading....</h1> -->
     </div>
 </template>
@@ -20,7 +34,8 @@ export default {
     },
     props:{
         search_hdr:Array,
-        search_data:Array
+        search_data:Array,
+        search_data_dst:Array
     },
     mounted: function(){
     },
@@ -40,9 +55,9 @@ th,td{
     padding-top: 7px;
 }
 #table_container{
-    margin-top: 12px ;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 #main-tb{
     width: 100%;

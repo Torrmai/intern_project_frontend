@@ -1,7 +1,7 @@
 <template>
     <div id="table_container">
         <div id="table_area_src" v-if="!error_msg">
-            <h3>ip src</h3>
+            <h3>ip src statistic</h3>
             <table id="main_tb" v-if="!error_msg">
                 <tr>
                     <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
@@ -16,7 +16,7 @@
             </table>
         </div>
         <div id="table_area_src" v-if="!error_msg">
-            <h3>ip dst</h3>
+            <h3>ip dst statistic</h3>
             <table id="main_tb" v-if="!error_msg">
                 <tr>
                     <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>

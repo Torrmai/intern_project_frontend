@@ -1,6 +1,6 @@
 <template>
     <div class="time_info">
-        <h1>Server time</h1>
+        <h1>Server time: <span id="server_time"></span></h1>
         <p id="server_time" v-if="year !== ''">{{date}}/{{month}}/{{year}} {{hour}}:{{min}}</p>
         <p id="server_time" v-else>Loading......</p>
     </div>
