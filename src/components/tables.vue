@@ -88,6 +88,8 @@ export default {
                             }
                             if(this.change_tp_src){this.hdr_data[4] = "%Throughput"}
                             this.hdr_data2 = response.data.header1.filter(i => i !== "end point")
+                            if(this.change_pps_dst){this.hdr_data2[3] = "%pps"}
+                            if(this.change_tp_dst){this.hdr_data2[4] = "%Throughput"}
                             let data_arr= response.data.data1
                             let data_dst= response.data.data2
                             this.sum_data = response.data.summ_data.map(i => parseFloat(i)/60.0)
@@ -99,8 +101,16 @@ export default {
                                 this.ip_dst[id] = dt[0]
                                 this.port_dst[id] = dt[1]
                                 this.ip_ver_dst[id] = (dt[2] == 0 ? "IPv4" : "IPv6")
-                                this.pps_dst[id] = parseFloat(dt[4]).toFixed(2)
-                                this.tp_dst[id] = parseFloat(dt[5]).toFixed(2)
+                                if(this.change_pps_dst){
+                                    this.pps_dst[id] = ((parseFloat(dt[4])/this.sum_data[0])*100).toFixed(2)
+                                }else{
+                                    this.pps_dst[id] = parseFloat(dt[4]).toFixed(2)
+                                }
+                                if(this.change_tp_dst){
+                                    this.tp_dst[id] = ((parseFloat(dt[5])/this.sum_data[1])*100).toFixed(2)
+                                }else{
+                                    this.tp_dst[id] = parseFloat(dt[5]).toFixed(2)
+                                }
                             }
                             this.error_msg = false
                         }
@@ -133,6 +143,24 @@ export default {
                 this.sum_size = this.sum_size.map(i => ((i*this.sum_data[1])/100).toFixed(2))
                 this.hdr_data[4] = "Throughput(bps)"
             }
+
+            if (val === "packet(pps)" && tbSrc == "dst") {
+                this.change_pps_dst = true
+                this.pps_dst = this.pps_dst.map(i=>((parseFloat(i)/this.sum_data[0])*100).toFixed(2))
+                this.hdr_data2[3] = "%pps"
+            }else if(val === "%pps" && tbSrc == "dst"){
+                this.change_pps_dst = false
+                this.pps_dst = this.pps_dst.map(i=>((i*this.sum_data[0])/100).toFixed(2))
+                this.hdr_data2[3] = "packet(pps)"
+            }else if(val === "Throughput(bps)" && tbSrc === "dst"){
+                this.change_tp_dst = true
+                this.tp_dst = this.tp_dst.map(i=>((parseFloat(i)/this.sum_data[1])*100).toFixed(2))
+                this.hdr_data2[4]="%Throughput"
+            }else if(val === "%Throughput" && tbSrc === "dst"){
+                this.change_tp_dst = false
+                this.tp_dst = this.tp_dst.map(i=>((i*this.sum_data[1])/100).toFixed(2))
+                this.hdr_data2[4] ="Throughput(bps)"
+            } 
         }
     },
     watch:{
