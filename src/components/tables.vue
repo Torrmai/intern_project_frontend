@@ -4,7 +4,7 @@
             <h3>ip src statistic</h3>
             <table id="main_tb" v-if="!error_msg">
                 <tr>
-                    <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
+                    <th v-for="hdr in hdr_data" :key="hdr"><div class="element" v-on:click="test_click(hdr,'src')">{{hdr}}</div></th>
                 </tr>
                 <tr v-for="n in 10" :key="n">
                     <td>{{ip_addr[n-1]}}</td>
@@ -19,7 +19,7 @@
             <h3>ip dst statistic</h3>
             <table id="main_tb" v-if="!error_msg">
                 <tr>
-                    <th v-for="hdr in hdr_data" :key="hdr">{{hdr}}</th>
+                    <th v-for="hdr in hdr_data2" :key="hdr"><div class="element" v-on:click="test_click(hdr,'dst')">{{hdr}}</div></th>
                 </tr>
                 <tr v-for="n in 10" :key="n">
                     <td>{{ip_dst[n-1]}}</td>
@@ -39,14 +39,14 @@ export default {
     name:"tables",
     data(){
         return{
-            hdr_data:[],
+            hdr_data:[],hdr_data2:[],
             ip_addr:[10],ip_dst:[10],
             port:[10],port_dst:[10],
             ip_version:[10],ip_ver_dst:[10],
             end_point:[10],
             count:[10],pps_dst:[10],
-            sum_size:[10],tp_dst:[10],
-            error_msg:true,
+            sum_size:[10],tp_dst:[10],sum_data:[2],
+            error_msg:true,change_pps_src:false,change_tp_src:false,change_pps_dst:false,change_tp_dst:false,
             session_name:""
         }
     },
@@ -63,8 +63,17 @@ export default {
             this.port[id] = (dt_array[1])
             this.ip_version[id] = ((dt_array[2] == 0 ? "IPv4" : "IPv6"))
             this.end_point[id]=((dt_array[3] == 0 ? "src" :"dst"))
-            this.count[id]=parseFloat(dt_array[4]).toFixed(2)
-            this.sum_size[id]=parseFloat(dt_array[5]).toFixed(2)
+            if(!this.change_pps_src){
+                this.count[id]=parseFloat(dt_array[4]).toFixed(2)
+            }
+            else{
+                this.count[id]=((parseFloat(dt_array[4])/this.sum_data[0]) * 100).toFixed(2)
+            }
+            if(!this.change_tp_src){
+                this.sum_size[id]=parseFloat(dt_array[5]).toFixed(2)
+            }else{
+                this.sum_size[id]=((parseFloat(dt_array[5])/this.sum_data[1])*100).toFixed(2)
+            }
         },
         fetch_data:function(){
             this.intervalid2 = setInterval(()=>{
@@ -74,8 +83,14 @@ export default {
                             //console.log(response.data)
                             this.session_name = response.data.session_name
                             this.hdr_data = response.data.header1.filter(i => i !== "end point")
+                            if(this.change_pps_src){
+                                this.hdr_data[3] = "%pps"
+                            }
+                            if(this.change_tp_src){this.hdr_data[4] = "%Throughput"}
+                            this.hdr_data2 = response.data.header1.filter(i => i !== "end point")
                             let data_arr= response.data.data1
                             let data_dst= response.data.data2
+                            this.sum_data = response.data.summ_data.map(i => parseFloat(i)/60.0)
                             for (let index = 0; index < data_arr.length; index++) {
                                 this.json_data_to_local(data_arr[index],index)
                             }
@@ -95,6 +110,29 @@ export default {
                     })
                     .catch(err=>console.log(err))
             },10*1000)
+        },
+        test_click:function(val,tbSrc){
+            console.log(`click on ${val} table name ${tbSrc}`)
+            if(val === "packet(pps)" && tbSrc === "src"){
+                this.change_pps_src = true
+                this.count = this.count.map(i =>((parseFloat(i)/this.sum_data[0])*100).toFixed(2))
+                this.hdr_data[3] = "%pps"
+            }
+            else if(val === "%pps" && tbSrc === "src"){
+                this.change_pps_src = false
+                this.count = this.count.map(i => ((i*this.sum_data[0])/100).toFixed(2))
+                this.hdr_data[3] ="packet(pps)"
+            }
+            else if(val === "Throughput(bps)" && tbSrc === "src"){
+                this.change_tp_src = true
+                this.sum_size = this.sum_size.map(i => ((parseFloat(i)/this.sum_data[1])*100).toFixed(2))
+                this.hdr_data[4] = "%Throughput"
+            }
+            else if(val === "%Throughput" && tbSrc === "src"){
+                this.change_tp_src = false
+                this.sum_size = this.sum_size.map(i => ((i*this.sum_data[1])/100).toFixed(2))
+                this.hdr_data[4] = "Throughput(bps)"
+            }
         }
     },
     watch:{
@@ -121,5 +159,7 @@ th,td{
 #main-tb{
     width: 100%;
 }
-
+.element:hover{
+    background-color: rgb(255, 123, 0);
+}
 </style>
